@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "ConsoleApp1": {
+      "commandName": "Project",
+      "commandLineArgs": "--inputFile Sample_nonMappedValues_1000.csv"
+    },
+    "newProfile3": {
+      "commandName": "Project",
+      "commandLineArgs": "--inputFile CAS_PROFILES_B6_10.csv"
+    },
+    "UserUtility": {
+      "commandName": "Project",
+      "commandLineArgs": "--inputFile \"C:\\repos\\sw_Net\\sw_Core\\sw_Migration\\SampleImport_min_BCRYPT_10.csv\""
+    }
+  }
+}

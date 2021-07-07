@@ -1,0 +1,68 @@
+{
+  "generalConfig": {
+    "org": "https://aclarkeimport.oktapreview.com",
+    "apiToken": "00PSbjpzLwlWjIEQa9NAB0eLIiKbz1yoxtcnJ27GZ1",
+    "isValidation": false,
+    "outputQueueBufferSize": 20000000,
+    "userQueueBufferSize": 20000000,
+    "producerTasks": 1,
+    "consumerTasks": 3,
+    "queueWaitms": 3000,
+    "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
+    "throttleMs": 300 //130 shall stay under 600/min rl; 1 will hit rl
+  },
+  "testUserConfig": {
+    "testUserDomain": "myDomain.com",
+    "testUserPsw": "Password@1",
+    "numTestUsers": 500
+  },
+  "importConfig": {
+    "inputFileFieldSeperator": ",",
+    "groupId": "00grgk9kr8XzWtxTh0h7",
+    "isLoginEqualEmail": false,
+    "isComboHashSalt": false,
+    "activateUserwithCreate": true,
+    "provisionUser": false, //will activate user when no password supplied
+    "sendEmailwithActivation": "false", //emails never sent when password included
+    "workFactor": 10, //BRCYPT only
+    "algorithm": "CLEARTEXT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
+    "saltOrder": "PREFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
+    "omitFromUserProfile": [
+      "value",
+      "salt"
+    ]
+  },
+  "rollbackConfig": {
+    "deactivateOnly": false,
+    "secondDeleteDelayMs": 100,
+    "excludeOktaIds": [
+    ]
+  },
+  "userApiConfig": { //for audit and rollback features
+    "apiPageSize": 200,
+    "endpoint": "groups", //groups, users
+    "groupId": "00grgk9kr8XzWtxTh0h7"
+  },
+  "validationConfig": {
+    "validateEmailFormat": [
+      "email",
+      "login"
+    ],
+    "validateNull": [
+    ],
+    "validateUniqueness": [
+      "login"
+    ],
+    "validateFieldLength": [
+    ]
+  },
+  "obfuscateConfig": {
+    "obfuscateWithStatic": [
+      "firstName:somedata",
+      "lastName:somedata"
+    ],
+    "obfuscateWithGUID": [
+      "email"
+    ]
+  }
+}

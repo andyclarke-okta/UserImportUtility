@@ -1,0 +1,112 @@
+﻿USE [OktaUserImport]
+GO
+
+/****** Object:  Table [dbo].[ProvioningQueue]    Script Date: 4/12/2019 7:21:23 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ProvioningQueue](
+	[provID] [bigint] IDENTITY(1,1) NOT NULL,
+	[login] [nvarchar](80) NOT NULL,
+	[firstName] [nvarchar](40) NOT NULL,
+	[lastName] [nvarchar](50) NOT NULL,
+	[email] [nvarchar](80) NOT NULL,
+	[trueBlueId] [nvarchar](80) NULL,
+	[employeeNumber] [nvarchar](80) NULL,
+	[value] [nvarchar](80) NULL,
+	[workFactor] [nvarchar](80) NULL,
+	[salt] [nvarchar](80) NULL,
+	[algorithm] [nvarchar](80) NULL,
+	[dateOfBirth] [nvarchar](80) NULL,
+	[Task] [tinyint] NOT NULL,
+	[Status] [tinyint] NULL,
+	[Response] [nvarchar](200) NULL,
+	[Created] [datetime] NOT NULL,
+	[Performed] [datetime] NULL,
+ CONSTRAINT [PK_ProvioningQueue] PRIMARY KEY CLUSTERED 
+(
+	[provID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[ProvioningQueue] ADD  CONSTRAINT [DF_ProvioningQueue_Status]  DEFAULT ((0)) FOR [Status]
+GO
+
+ALTER TABLE [dbo].[ProvioningQueue] ADD  DEFAULT (getdate()) FOR [Created]
+GO
+------------
+USE [OktaUserImport]
+GO
+
+/****** Object:  View [dbo].[ProvisioningQueueView]    Script Date: 4/12/2019 7:28:07 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+
+CREATE VIEW [dbo].[ProvisioningQueueView]
+AS
+
+SELECT TOP (100) [provID]
+      ,[login]
+      ,[firstName]
+      ,[lastName]
+      ,[email]
+      ,[trueBlueId]
+      ,[employeeNumber]
+      ,[value]
+      ,[workFactor]
+      ,[salt]
+      ,[algorithm]
+      ,[dateOfBirth]
+      ,[Task]
+
+FROM            dbo.ProvioningQueue
+WHERE        (Status in (0,2))
+ORDER BY Created DESC
+
+
+GO
+
+-----------------
+USE [OktaUserImport]
+GO
+
+INSERT INTO [dbo].[ProvioningQueue]
+           ([login]
+           ,[firstName]
+           ,[lastName]
+           ,[email]
+           ,[trueBlueId]
+           ,[employeeNumber]
+           ,[value]
+           ,[workFactor]
+           ,[salt]
+           ,[algorithm]
+           ,[dateOfBirth]
+           ,[Task])
+
+     VALUES
+           ('nina.agdal@erin.local'
+           ,'nina'
+           ,'agdal'
+           ,'nina.agdal@mailinator.com'
+           ,'solo'
+           ,'123456'
+           ,'CQHCCDoi.R.wGyFl/aRh7CQ4GbvvIUm'
+           ,10
+           ,'e9X/3IMYBmlAEisc01FDwe'
+           ,'BCRYPT'
+           ,'1/1/1980'
+           ,0);
+
+GO
