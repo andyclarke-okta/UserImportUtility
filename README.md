@@ -21,7 +21,7 @@ dotNet Core can be executed on any platform.
 * Linux
 
 Check here for runtime environments for all OSs.     
-[download runtime](https://dotnet.microsoft.com/download/dotnet-core/2.2)
+[download runtime](https://dotnet.microsoft.com/download/dotnet/3.1)
 
 
 ## Features 

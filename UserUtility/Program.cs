@@ -68,7 +68,6 @@ namespace UserUtility
 
                     //Create Test Users without blocking queue
                     services.AddSingleton<IOutputService, OutputDummyService>();
-                    //services.AddSingleton<UserQueue<CustomOktaUser>>();
                     services.AddSingleton<IConsumerService, ConsumerTestUserService>();
                     services.AddSingleton<IProducerService, ProducerDummyService>();
 

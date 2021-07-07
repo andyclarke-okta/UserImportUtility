@@ -1,7 +1,7 @@
 {
   "generalConfig": {
-    "org": "https://aclarkeimport.oktapreview.com",
-    "apiToken": "00PSbjpzLwlWjIEQa9NAB0eLIiKbz1yoxtcnJ27GZ1",
+    "org": "https://subdomain.oktapreview.com",
+    "apiToken": "00PSbjpzLwlWxxxxxxxxxxxxxxxxxxxxxxxxx",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
