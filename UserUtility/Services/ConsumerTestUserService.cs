@@ -44,7 +44,7 @@ namespace UserUtility.Services
         private string _algorithm;
         private string _saltOrder;
         private List<string> _omitFromUserProfile;
-
+        private bool _createInGroup;
 
         int _numTestUsers;
         int _perTaskUsers;
@@ -76,6 +76,7 @@ namespace UserUtility.Services
             _algorithm = _config.GetValue<string>("importConfig:algorithm");
             _saltOrder = _config.GetValue<string>("importConfig:saltOrder");
             _omitFromUserProfile = _config.GetSection("importConfig:omitFromUserProfile").Get<List<string>>();
+            _createInGroup = _config.GetValue<bool>("importConfig:createInGroup");
 
             _testUserDomain = _config.GetValue<string>("testUserConfig:testUserDomain");
             _numTestUsers = _config.GetValue<int>("testUserConfig:numTestUsers");
@@ -251,14 +252,25 @@ namespace UserUtility.Services
                     );
 
 
-            
-
-                //password provided add credentials
+            if (_createInGroup)
+            {
+                //password provided add credentials and groupId
                 jsonObject = new JObject(
                         new JProperty("profile", profile),
                         new JProperty("groupIds", groups),
                         new JProperty("credentials", credentials)
                     );
+            }
+            else
+            {
+                //password provided add credentials onlly
+                jsonObject = new JObject(
+                        new JProperty("profile", profile),
+                        new JProperty("credentials", credentials)
+                    );
+            }
+
+
            
 
 

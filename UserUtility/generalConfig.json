@@ -1,7 +1,7 @@
 {
   "generalConfig": {
-    "org": "https://subdomain.oktapreview.com",
-    "apiToken": "00PSbjpzLwlWxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "org": "https://ciscolab1.oktapreview.com",
+    "apiToken": "00wACEM7O-4hg2bAhf6uK_LHkocUkF5XZhagJzHs8j",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
@@ -9,16 +9,17 @@
     "consumerTasks": 3,
     "queueWaitms": 3000,
     "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
-    "throttleMs": 300 //130 shall stay under 600/min rl; 1 will hit rl
+    "throttleMs": 15 //130 shall stay under 600/min rl; 1 will hit rl
   },
   "testUserConfig": {
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
-    "numTestUsers": 500
+    "numTestUsers": 10000
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
-    "groupId": "00grgk9kr8XzWtxTh0h7",
+    "groupId": "00gyxgm1aYvur4Fto1d6",
+    "createInGroup": false,
     "isLoginEqualEmail": false,
     "isComboHashSalt": false,
     "activateUserwithCreate": true,
@@ -41,7 +42,7 @@
   "userApiConfig": { //for audit and rollback features
     "apiPageSize": 200,
     "endpoint": "groups", //groups, users
-    "groupId": "00grgk9kr8XzWtxTh0h7"
+    "groupId": "00gyxgm1aYvur4Fto1d6"
   },
   "validationConfig": {
     "validateEmailFormat": [
