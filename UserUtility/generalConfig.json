@@ -11,7 +11,7 @@
     "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
     "throttleMs": 15 //130 shall stay under 600/min rl; 1 will hit rl
   },
-  "testUserConfig": {
+  "testUserConfig": { //not applicable when creating users from CSV file
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
     "numTestUsers": 10000
@@ -19,14 +19,14 @@
   "importConfig": {
     "inputFileFieldSeperator": ",",
     "groupId": "00gyxgm1aYvur4Fto1d6",
-    "createInGroup": false,
+    "createInGroup": true,
     "isLoginEqualEmail": false,
     "isComboHashSalt": false,
     "activateUserwithCreate": true,
     "provisionUser": false, //will activate user when no password supplied
     "sendEmailwithActivation": "false", //emails never sent when password included
     "workFactor": 10, //BRCYPT only
-    "algorithm": "CLEARTEXT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
+    "algorithm": "SHA-256", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
     "saltOrder": "PREFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
     "omitFromUserProfile": [
       "value",

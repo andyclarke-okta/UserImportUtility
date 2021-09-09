@@ -18,6 +18,7 @@ namespace UserUtility.Models
     //maintain the same order in the user class that exists in the CSV file to ensure the output files match their headers
     public class CustomOktaUser
     {
+        //DEV_Hashed minimal
         [Key]
         public string login { get; set; }
         public string email { get; set; }
@@ -175,7 +176,7 @@ namespace UserUtility.Models
     public class CsvHeaderMapping : CsvMapping<CustomOktaUser>
     {
 
-        //DEV_Hashed
+        //DEV_Hashed minimal
         public CsvHeaderMapping(IConfiguration config) : base()
         {
             MapProperty(0, x => x.login);
