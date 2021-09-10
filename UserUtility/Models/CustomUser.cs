@@ -24,6 +24,7 @@ namespace UserUtility.Models
         public string email { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
+        public string userId { get; set; }
         public string value { get; set; }
         public string salt { get; set; }
 
@@ -183,6 +184,7 @@ namespace UserUtility.Models
             MapProperty(1, x => x.email);
             MapProperty(2, x => x.firstName);
             MapProperty(3, x => x.lastName);
+            MapProperty(4, x => x.userId);
             MapProperty(5, x => x.value);
             MapProperty(6, x => x.salt);
         }
