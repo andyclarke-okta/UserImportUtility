@@ -1,7 +1,7 @@
 {
   "generalConfig": {
     "org": "https://aclarkeimport.oktapreview.com",
-    "apiToken": "00oZO57fOmgFZlH",
+    "apiToken": "00oZO57fOmgFZ",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
@@ -14,7 +14,19 @@
   "testUserConfig": { //not applicable when creating users from CSV file
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
-    "numTestUsers": 500
+    "addionalAttributes": { //email, login and lastName are set programatically with GUID
+      "firstName": "test",
+      "test_attribute": "test1",
+      "test_attribute2": "test2",
+      "test_attribute3": "test3",
+      "test_attribute4": "test4",
+      "test_attribute5": "test5",
+      "test_attribute6": "test6",
+      "test_attribute7": "test7",
+      "test_attribute8": "test8",
+      "test_attribute9": "test9"
+    },
+    "numTestUsers": 2
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
@@ -25,7 +37,7 @@
     "provisionUser": false, //will activate user when no password supplied
     "sendEmailwithActivation": "false", //emails never sent when password included
     "workFactor": 10, //BRCYPT only
-    "algorithm": "SHA-256", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
+    "algorithm": "CLEARTEXT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
     "saltOrder": "PREFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
     "omitFromUserProfile": [
       "value",

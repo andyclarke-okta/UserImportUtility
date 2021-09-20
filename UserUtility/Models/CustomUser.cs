@@ -24,9 +24,17 @@ namespace UserUtility.Models
         public string email { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
-        public string userId { get; set; }
         public string value { get; set; }
         public string salt { get; set; }
+        public string test_attribute { get; set; }
+        public string test_attribute2 { get; set; }
+        public string test_attribute3 { get; set; }
+        public string test_attribute4 { get; set; }
+        public string test_attribute5 { get; set; }
+        public string test_attribute6 { get; set; }
+        public string test_attribute7 { get; set; }
+        public string test_attribute8 { get; set; }
+        public string test_attribute9 { get; set; }
 
 
 
@@ -184,7 +192,6 @@ namespace UserUtility.Models
             MapProperty(1, x => x.email);
             MapProperty(2, x => x.firstName);
             MapProperty(3, x => x.lastName);
-            MapProperty(4, x => x.userId);
             MapProperty(5, x => x.value);
             MapProperty(6, x => x.salt);
         }

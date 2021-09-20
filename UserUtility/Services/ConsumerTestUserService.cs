@@ -50,6 +50,8 @@ namespace UserUtility.Services
         int _perTaskUsers;
         string _testUserDomain;
         string _testUserPsw;
+        //private List<string> _addionalAttributes;
+        private Dictionary<string, string> _addionalAttributes;
         //CustomOktaUser _testUser = null;
 
         int _myCount = 0;
@@ -81,6 +83,9 @@ namespace UserUtility.Services
             _testUserDomain = _config.GetValue<string>("testUserConfig:testUserDomain");
             _numTestUsers = _config.GetValue<int>("testUserConfig:numTestUsers");
             _testUserPsw = _config.GetValue<string>("testUserConfig:testUserPsw");
+            //_addionalAttributes = _config.GetSection("testUserConfig:addionalAttributes").Get<List<string>>();
+
+            _addionalAttributes = _config.GetSection("testUserConfig:addionalAttributes").GetChildren().ToDictionary(x => x.Key, x => x.Value);
 
             decimal myDec = (decimal)(_numTestUsers / _consumerTasks);
             _perTaskUsers = (int)Math.Round(myDec);
@@ -134,23 +139,34 @@ namespace UserUtility.Services
 
             for (int i = 0; i < perTaskUsers; i++)
             {
-                //for blocking approach
-                //_testUser.email = null;
-                //_testUser.login = null;
-                //_testUser.firstName = null;
-                //_testUser.lastName = null;
-                //_testUser.value = null;
+
 
                 //for async based approach
                 CustomOktaUser _testUser = new CustomOktaUser();
-
-
-
                 string myGuidStr = Guid.NewGuid().ToString();
 
-                _testUser.email = "test." + myGuidStr + "@" + _testUserDomain;
+                //build Okta profile attributes from class
+                var properties = typeof(CustomOktaUser).GetProperties().Where(n => n.PropertyType == typeof(string) || n.PropertyType == typeof(List<string>));
+
+                foreach (PropertyInfo property in properties)
+                {
+                        if (property.PropertyType == typeof(System.String))
+                        {
+                            //Console.WriteLine("property.Name ...  " + property.Name);
+                            string myValue;
+                            if (_addionalAttributes.TryGetValue(property.Name, out myValue))
+                            {
+                                property.SetValue(_testUser, myValue);
+                                //Console.WriteLine("property.Value ...  " + myValue);
+                            }
+                    }
+                }
+
+
+                //_testUser.email = "test." + myGuidStr + "@" + _testUserDomain;
+                _testUser.email = _testUser.firstName + "." + myGuidStr + "@" + _testUserDomain;
                 _testUser.login = _testUser.email;
-                _testUser.firstName = "test";
+                //_testUser.firstName = "test";
                 _testUser.lastName = myGuidStr;
                 _testUser.value = _testUserPsw;
 
