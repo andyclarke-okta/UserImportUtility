@@ -1,7 +1,7 @@
 {
   "generalConfig": {
     "org": "https://aclarkeimport.oktapreview.com",
-    "apiToken": "00oZO57fOmgFZ",
+    "apiToken": "00oZO57fOmgFZlHQy0WC",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
@@ -15,7 +15,7 @@
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
     "addionalAttributes": { //email, login and lastName are set programatically with GUID
-      "firstName": "test",
+      "firstName": "testFirstName",
       "test_attribute": "test1",
       "test_attribute2": "test2",
       "test_attribute3": "test3",
@@ -26,7 +26,7 @@
       "test_attribute8": "test8",
       "test_attribute9": "test9"
     },
-    "numTestUsers": 2
+    "numTestUsers": 8
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
@@ -50,9 +50,10 @@
     "excludeOktaIds": [
     ]
   },
-  "userApiConfig": { //for audit and rollback features
-    "apiPageSize": 200,
-    "endpoint": "groups", //groups, users
+  "userApiConfig": { //for audit,rollback and Test User Update features
+    "apiPageSize": 12,
+    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
+    "searchcriteria": "lastUpdated lt \"2021-09-21T00:00:00.000Z\"",
     "groupId": "00grgk9kr8XzWtxTh0h7"
   },
   "validationConfig": {

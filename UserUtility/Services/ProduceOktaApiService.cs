@@ -18,7 +18,7 @@ using System.Threading;
 
 namespace UserUtility.Services
 {
-    public class ProduceUserApiService : IProducerService
+    public class ProduceOktaApiService : IProducerService
     {
 
         private readonly ILogger<IProducerService> _logger;
@@ -26,7 +26,7 @@ namespace UserUtility.Services
         private BlockingCollection<BasicOktaUser> _userQueue;
        
 
-        public ProduceUserApiService(ILogger<IProducerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue)
+        public ProduceOktaApiService(ILogger<IProducerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue)
         {
             _logger = logger;
             _config = config;
@@ -37,11 +37,11 @@ namespace UserUtility.Services
         {
             //Note: only can fire Sql request to get data
             //only one producer task should be created
-            _logger.LogInformation("ProduceUserApiService Start on TaskId={1}, ThreadId={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+            _logger.LogInformation("ProduceOktaApiService Start on TaskId={1}, ThreadId={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
             
             await Task.Run(() => GetApiDataAsync());
 
-            _logger.LogInformation("ProduceUserApiService Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+            _logger.LogInformation("ProduceOktaApiService Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
         }
 
         public async Task GetApiDataAsync()
@@ -52,8 +52,10 @@ namespace UserUtility.Services
             string apiToken = _config.GetValue<string>("generalConfig:apiToken");
             int throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
             string endpoint = _config.GetValue<string>("userApiConfig:endpoint");
+            string searchcriteria = _config.GetValue<string>("userApiConfig:searchcriteria");
             string groupId = _config.GetValue<string>("userApiConfig:groupId");
             int apiPageSize = _config.GetValue<int>("userApiConfig:apiPageSize");
+            int numTestUsers = _config.GetValue<int>("testUserConfig:numTestUsers");
             ApiHelper apiHelper = new ApiHelper();
             string content = null;
             bool isThisLastPage = true;
@@ -64,19 +66,29 @@ namespace UserUtility.Services
             using (HttpClient client = new HttpClient())
             {
 
-
                 do
                 {
                     if (apiHeaderResults == null)
                     {
                         //initialize path
-                        if (endpoint == "users")
+                        switch (endpoint)
                         {
-                            path = new Uri(apiUrl + "/api/v1/users?limit=" + apiPageSize);
-                        }
-                        else
-                        {
-                            path = new Uri(apiUrl + "/api/v1/groups/" + groupId + "/users?limit=" + apiPageSize);
+                            case "allUsers":
+                                path = new Uri(apiUrl + "/api/v1/users?limit=" + apiPageSize);
+                                break;
+                            case "searchUsers":
+
+                                //urlencoding
+                                string encodedSearchcriteria = System.Web.HttpUtility.UrlEncode(searchcriteria);
+
+                                path = new Uri(apiUrl + "/api/v1/users?search=" + encodedSearchcriteria + "&limit=" + apiPageSize);
+                                break;
+                            case "groups":
+                                path = new Uri(apiUrl + "/api/v1/groups/" + groupId + "/users?limit=" + apiPageSize);
+                                break;
+                            default:
+                                path = new Uri(apiUrl + "/api/v1/groups/" + groupId + "/users?limit=" + apiPageSize);
+                                break;
                         }
 
 
@@ -88,7 +100,7 @@ namespace UserUtility.Services
                 
                     //using (HttpClient client = new HttpClient())
                     //{
-                        _logger.LogDebug("ProduceUserApiService Send api path {0}", path);
+                        _logger.LogDebug("ProduceOktaApiService Send api path {0}", path);
                         client.DefaultRequestHeaders.Accept.Clear();
                         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("SSWS", apiToken);
@@ -102,21 +114,17 @@ namespace UserUtility.Services
                             //Handle paged user content
                             //content = await response.Content.ReadAsStringAsync();
                             content = response.Content.ReadAsStringAsync().Result;
-                            _logger.LogDebug("ProduceUserApiService API content received");
+                            _logger.LogDebug("ProduceOktaApiService API content received");
                             List<BasicOktaUser> listOktaUser = Newtonsoft.Json.JsonConvert.DeserializeObject<List<BasicOktaUser>>(content);
                             foreach (var item in listOktaUser)
                             {
+                                if (_userQueue.Count <= numTestUsers)
+                                {
+                                    _userQueue.TryAdd(item, 1000);
+                                    producerCount++;
+                                    _logger.LogTrace("ProduceOktaApiService add Queue TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+                                }
 
-                            //CustomOktaUser inputUser = new CustomOktaUser();
-                            //inputUser.login = item.profile.login;
-                            //inputUser.email = item.profile.email;
-                            //inputUser.firstName = item.profile.firstName;
-                            //inputUser.lastName = item.profile.lastName;
-                            //inputUser.output = item.Status + "," + item.Id;
-
-                            _userQueue.TryAdd(item, 1000);
-                                producerCount++;
-                                _logger.LogTrace("ProduceUserApiService add Queue TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, item.Id);
                             }
                             bool isContentNull = false;
                             if (listOktaUser == null)
@@ -128,23 +136,23 @@ namespace UserUtility.Services
                             apiHeaderResults = apiHelper.GetHeaderInfo(response, isContentNull);
                             isThisLastPage = apiHeaderResults.IsLastPage;
                             myNextPage = apiHeaderResults.NextPage;
-                            _logger.LogTrace("ProduceUserApiService GetUserByGroup isThisLastPage={0}", isThisLastPage);
+                            _logger.LogTrace("ProduceOktaApiService ProcessPagination isThisLastPage={0}", isThisLastPage);
                         }
                         else
                         {
                             //for failed GET
                             content = await response.Content.ReadAsStringAsync();
                             OktaApiError oktaApiError = Newtonsoft.Json.JsonConvert.DeserializeObject<OktaApiError>(content);
-                            _logger.LogError("ProduceUserApiService Status={0},Error={1}", response.StatusCode.ToString(), oktaApiError.errorCauses[0].errorSummary);
+                            _logger.LogError("ProduceOktaApiService Status={0},Error={1}", response.StatusCode.ToString(), oktaApiError.errorCauses[0].errorSummary);
                         }
                     
                     //}//end using
-                } while (!isThisLastPage);
+                } while (!(isThisLastPage || (_userQueue.Count > numTestUsers)));
 
             }//end using
 
             _userQueue.CompleteAdding();
-            _logger.LogInformation("ProduceUserApiService Complete TaskId={0}, ThreadId={1}, User_COUNT={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, producerCount);
+            _logger.LogInformation("ProduceOktaApiService Complete TaskId={0}, ThreadId={1}, User_COUNT={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, producerCount);
         }
     }
 }

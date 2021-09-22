@@ -1,9 +1,10 @@
 # DataMigration_UserUtility.
 
 **NEW**
-- **High Performance Test User Load**
+- **Update custom attributes for Test Users **
 
 **Implements Data Migration Tasks:** 
+- **High Performance Test User Load**
 - **High Performance Bulk User Import**     
 - **Delete Users**    
 - **Validate Users**
@@ -57,12 +58,18 @@ Check here for runtime environments for all OSs.
 		* Add to Group
 		* Load Custom Okta Profile
 	* Rollback (Delete Okta User)
-	* Audit ( read all users in group/tenant with status)
+	* Create Test Users
+		* GUID based username
+		* Option to Add to Group
+		* Load Custom Profile Attributes from Config File
 	* Incremental ( Create/Update Okta Users)
 		* Password updated
 		* Profile updated
 		* Create user without password
 		* Create user with cleartext password
+	* Update Test User Attributes
+		* Configurable attributes with static values
+	* Audit ( read all users in group/tenant with status)
 	* Validate
 		* check list of attributes for null or empty
 		* check list of attributes for email format
@@ -150,35 +157,45 @@ The application makes use of JSON configuration files to set runtime parameters.
 User General Configuration Example;
 {
   "generalConfig": {
-    "org": "https://subdomain.okta.com",
-    "apiToken": "00fEy6uHAbOvfqJdic-xxxxxxxxxxxxxx",
+    "org": "https://mysubdomain.oktapreview.com",
+    "apiToken": "00oZO57fOmgFZlHQ",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
-    "producerTasks": 5,
+    "producerTasks": 1,
     "consumerTasks": 1,
     "queueWaitms": 3000,
-	"reportingWaitms":  3000,  //3000;increase when too many Error Adding Queue Entry
-    "throttleMs": 100
+    "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
+    "throttleMs": 130 //130 shall stay under 600/min rl; 1 will hit rl
   },
-    "testUserConfig": {
+  "testUserConfig": { //not applicable when creating users from CSV file
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
-    "numTestUsers": 500
+    "addionalAttributes": { //email, login and lastName are set programatically with GUID
+      "firstName": "testFirstName",
+      "test_attribute": "test1",
+      "test_attribute2": "test2",
+      "test_attribute3": "test3",
+      "test_attribute4": "test4",
+      "test_attribute5": "test5",
+      "test_attribute6": "test6",
+      "test_attribute7": "test7",
+      "test_attribute8": "test8",
+      "test_attribute9": "test9"
+    },
+    "numTestUsers": 8
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
-	"stringArrayFieldSeperator": "|",
-    "groupId": "00gbmydpimCv4zoJ81t7",
-	"isCustomInputLogic": false, //use this code block to implement customer specific transformations of input fields
+    "groupId": "00grgk9kr8XzWtxTh0h7",
     "isLoginEqualEmail": false,
-	"isComboHashSalt": true,
-    "activateUserwithCreate": "false",
-    "provisionUser": true, //will activate user when no password supplied
+    "isComboHashSalt": false,
+    "activateUserwithCreate": true,
+    "provisionUser": false, //will activate user when no password supplied
     "sendEmailwithActivation": "false", //emails never sent when password included
     "workFactor": 10, //BRCYPT only
-    "algorithm": "NONE", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
-    "saltOrder": "POSTFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
+    "algorithm": "CLEARTEXT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
+    "saltOrder": "PREFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
     "omitFromUserProfile": [
       "value",
       "salt"
@@ -186,14 +203,15 @@ User General Configuration Example;
   },
   "rollbackConfig": {
     "deactivateOnly": false,
-    "secondDeleteDelayMs": 50,
+    "secondDeleteDelayMs": 100,
     "excludeOktaIds": [
     ]
   },
-  "userApiConfig": { //for audit and rollback features
-    "apiPageSize": 200,
-    "endpoint": "groups", //groups, users
-    "groupId": "00gjvaqcb3PzYuKmz0h7"
+  "userApiConfig": { //for audit,rollback and Test User Update features
+    "apiPageSize": 12,
+    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
+    "searchcriteria": "lastUpdated lt \"2021-09-21T00:00:00.000Z\"",
+    "groupId": "00grgk9kr8XzWtxTh0h7"
   },
   "validationConfig": {
     "validateEmailFormat": [
@@ -201,13 +219,11 @@ User General Configuration Example;
       "login"
     ],
     "validateNull": [
-      "employeeNumber"
     ],
     "validateUniqueness": [
-      "email"
+      "login"
     ],
     "validateFieldLength": [
-      "trueBlueId:10"
     ]
   },
   "obfuscateConfig": {
@@ -220,6 +236,7 @@ User General Configuration Example;
     ]
   }
 }
+
 
 ```
 
@@ -236,7 +253,8 @@ User General Configuration Example;
 
 - **testUserDomain:** email domain of test user
 - **testUserPsw:** password for all test users
-- **numTestUsers:** number of test user to create in Okta Org
+- **addionalAttributes:** key value pairs of custom attribute name and value
+- **numTestUsers:** number of test users to create or update in Okta Org
 
 - **inputFileFieldSeperator:** field delimiter in input file
 - **stringArrayFieldSeperator: ** field delimiter for string arrays embedded into input file
@@ -261,7 +279,8 @@ NOTE: "isLoginEqualEmail" and "isComboHashSalt" are flags to invoke transformati
 
 
 - **apiPageSize:** size of page when using GET from Okta
-- **endpoint:** users/groups either /api/v1/users  or /api/v1/groups/<groupId>/users
+- **endpoint:** allUsers/groups/searchUsers (either /api/v1/users  or /api/v1/groups/<groupId>/users or /api/v1/users?search=<searchCriteria>
+- **searchcriteria:** Get user list from this criteria (if  searchUsers selected)
 - **groupId:** Get user list from this group (if groups endpoint selected)
 
 - **validateEmailFormat:** Array of attributes to validate email format

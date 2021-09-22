@@ -67,11 +67,11 @@ namespace UserUtility
                     }
 
                     //Create Test Users without blocking queue
-                    services.AddSingleton<IOutputService, OutputDummyService>();
-                    services.AddSingleton<IConsumerService, ConsumerTestUserService>();
-                    services.AddSingleton<IProducerService, ProducerDummyService>();
+                    //services.AddSingleton<IOutputService, OutputDummyService>();
+                    //services.AddSingleton<IConsumerService, ConsumerTestUserService>();
+                    //services.AddSingleton<IProducerService, ProducerDummyService>();
 
-                    //Create Test Users with Producer Consumer Model
+                    //Create Test Users with Producer Consumer Model -depricated
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();
                     //services.AddSingleton<UserQueue<CustomOktaUser>>();
                     //services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
@@ -79,16 +79,22 @@ namespace UserUtility
 
 
                     //Create Users from CSV File
-                    //services.AddSingleton<IOutputService, OutputCustomCsvService>();
-                    //services.AddSingleton<UserQueue<CustomOktaUser>>();
-                    //services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
-                    //services.AddSingleton<IProducerService, ProducerTinyCsvService>();
+                    services.AddSingleton<IOutputService, OutputCustomCsvService>();
+                    services.AddSingleton<UserQueue<CustomOktaUser>>();
+                    services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
+                    services.AddSingleton<IProducerService, ProducerTinyCsvService>();
 
                     //Create Users from SQL DB
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();
                     //services.AddSingleton<UserQueue<CustomOktaUser>>();
                     //services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
                     //services.AddSingleton<IProducerService, ProducerSqlDbService>();
+
+                    //Update Test Users 
+                    //services.AddSingleton<IOutputService, OutputDummyService>();
+                    //services.AddSingleton<UserQueue<BasicOktaUser>>();
+                    //services.AddSingleton<IConsumerService, ConsumerUpdateTestUserService>();
+                    //services.AddSingleton<IProducerService, ProduceOktaApiService>();
 
                     //Upsert Users from CSV File
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();
@@ -100,13 +106,13 @@ namespace UserUtility
                     //services.AddSingleton<IOutputService, OutputBasicCsvService<RollbackOktaUser>>();
                     //services.AddSingleton<UserQueue<BasicOktaUser>>();
                     //services.AddSingleton<IConsumerService, ConsumerDeleteUserService>();
-                    //services.AddSingleton<IProducerService, ProduceUserApiService>();
+                    //services.AddSingleton<IProducerService, ProduceOktaApiService>();
 
                     ////Audit Users
                     //services.AddSingleton<IOutputService, OutputBasicCsvService<AuditOktaUser>>();
                     //services.AddSingleton<UserQueue<BasicOktaUser>>();
                     //services.AddSingleton<IConsumerService, ConsumerAuditUserService>();
-                    //services.AddSingleton<IProducerService, ProduceUserApiService>();
+                    //services.AddSingleton<IProducerService, ProduceOktaApiService>();
 
 
                     //Validate user
