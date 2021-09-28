@@ -1,22 +1,22 @@
 {
   "generalConfig": {
-    "org": "https://aclarkeimport.oktapreview.com",
-    "apiToken": "00oZO57fOmgFZlHQy0WC",
+    "org": "https://subdomain.oktapreview.com",
+    "apiToken": "00wACEM7O-4hg2bAhf6uK_",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
     "producerTasks": 1,
     "consumerTasks": 1,
     "queueWaitms": 3000,
-    "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
-    "throttleMs": 130 //130 shall stay under 600/min rl; 1 will hit rl
+    "cleanUpWaitms": 3000, //3000;wait time to allow async API responses
+    "throttleMs": 15 //130 shall stay under 600/min rl; 1 will hit rl
   },
   "testUserConfig": { //not applicable when creating users from CSV file
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
     "addionalAttributes": { //email, login and lastName are set programatically with GUID
       "firstName": "testFirstName",
-      "test_attribute": "test1",
+      "test_attribute": "newValue1",
       "test_attribute2": "test2",
       "test_attribute3": "test3",
       "test_attribute4": "test4",
@@ -26,11 +26,13 @@
       "test_attribute8": "test8",
       "test_attribute9": "test9"
     },
-    "numTestUsers": 8
+    "numTestUsers": 2
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
-    "groupId": "00grgk9kr8XzWtxTh0h7",
+    "stringArrayFieldSeperator": "|",
+    "groupId": "00gyxgm1aYvur4Fto1d6",
+    "createInGroup": false,
     "isLoginEqualEmail": false,
     "isComboHashSalt": false,
     "activateUserwithCreate": true,
@@ -44,17 +46,17 @@
       "salt"
     ]
   },
-  "rollbackConfig": {
+  "userApiConfig": { //for audit, delete and updateTestUsers features
+    "apiPageSize": 200,
+    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
+    "searchcriteria": "lastUpdated lt \"2021-01-01T00:00:00.000Z\"",
+    "groupId": "00gyxgm1aYvur4Fto1d6"
+  },
+  "deleteConfig": {
     "deactivateOnly": false,
     "secondDeleteDelayMs": 100,
     "excludeOktaIds": [
     ]
-  },
-  "userApiConfig": { //for audit,rollback and Test User Update features
-    "apiPageSize": 12,
-    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
-    "searchcriteria": "lastUpdated lt \"2021-09-21T00:00:00.000Z\"",
-    "groupId": "00grgk9kr8XzWtxTh0h7"
   },
   "validationConfig": {
     "validateEmailFormat": [

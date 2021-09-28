@@ -22,7 +22,7 @@ namespace UserUtility.Services
         private FileStream fsOutputFailure = null;
         private FileStream fsOutputReplay = null;
         private int _queueWaitms;
-        private int _reportingWaitms;
+        private int _cleanUpWaitms;
         //bool _isAudit;
         string baseFileName = null;
         string _featureMode = null;
@@ -46,7 +46,7 @@ namespace UserUtility.Services
             _logger = logger;
             _config = config;
             _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
-            _reportingWaitms = _config.GetValue<int>("generalConfig:reportingWaitms");
+            _cleanUpWaitms = _config.GetValue<int>("generalConfig:cleanUpWaitms");
             //_isAudit = _config.GetValue<bool>("generalConfig:isAudit");
             _userQueue = inputQueue.userQueue;
             _successQueue = inputQueue.successQueue;
@@ -63,7 +63,8 @@ namespace UserUtility.Services
             //string headerLine = null;
             string outFile = null;
 
-            _logger.LogInformation("ConfigAuditCsvOutput Start on TaskId={1}, ThreadId={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+
+           _logger.LogInformation("ConfigAuditCsvOutput Start on TaskId={1}, ThreadId={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
 
 
 
@@ -143,6 +144,23 @@ namespace UserUtility.Services
             return;
         }
 
+
+        public void IncrementSuccessCount()
+        {
+            outputSuccessCount++;
+        }
+
+        public void IncrementFailureCount()
+        {
+            outputFailureCount++;
+        }
+
+        public void IncrementReplayCount()
+        {
+            outputReplayCount++;
+        }
+
+
         public async Task ProcessOutputSuccess()
         {
             _logger.LogInformation("ProcessOutputSuccess Start  TaskId={0}, ThreadId={1}",  Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
@@ -160,10 +178,10 @@ namespace UserUtility.Services
                         if (_userQueue.IsCompleted && (_failureQueue.Count == 0) && (_replayQueue.Count == 0))
                         {
                             //_logger.LogInformation("ProcessOutputSuccess userQueue complete successQueue={0}", _successQueue.Count);
-                            Task.WaitAll(Task.Delay(_reportingWaitms));
+                            Task.WaitAll(Task.Delay(_cleanUpWaitms));
                             if (_successQueue.Count > 0)
                             {
-                                _logger.LogInformation("ProcessOutputSuccess post reportingWaitms successQueue={0}", _successQueue.Count);
+                                _logger.LogInformation("ProcessOutputSuccess post _cleanUpWaitms successQueue={0}", _successQueue.Count);
                                 //before closing reporting queue
                                 //wait for any outstanding APis to respond
                                 //check queue count
@@ -212,11 +230,11 @@ namespace UserUtility.Services
                         if (_userQueue.IsCompleted && (_successQueue.Count == 0) && (_replayQueue.Count == 0))
                         {
                             //_logger.LogInformation("ProcessOutputFailure userQueue complete failureQueue={0}", _failureQueue.Count);
-                            Task.WaitAll(Task.Delay(_reportingWaitms));
-                            //Thread.Sleep(_reportingWaitms);
+                            Task.WaitAll(Task.Delay(_cleanUpWaitms));
+                            //Thread.Sleep(_cleanUpWaitms);
                             if (_failureQueue.Count > 0)
                             {
-                                _logger.LogInformation("ProcessOutputFailure post reportingWaitms failureQueue={0}", _failureQueue.Count);
+                                _logger.LogInformation("ProcessOutputFailure post _cleanUpWaitms failureQueue={0}", _failureQueue.Count);
                                 //before closing reporting queue
                                 //wait for any outstanding APis to respond
                                 //check queue count
@@ -266,10 +284,10 @@ namespace UserUtility.Services
                         if (_userQueue.IsCompleted && (_successQueue.Count == 0) && (_failureQueue.Count == 0))
                         {
                             //_logger.LogInformation("ProcessOutputReplay userQueue complete replayQueue={0}", _replayQueue.Count);
-                            Task.WaitAll(Task.Delay(_reportingWaitms));
+                            Task.WaitAll(Task.Delay(_cleanUpWaitms));
                             if (_replayQueue.Count > 0)
                             {
-                                _logger.LogInformation("ProcessOutputReplay post reportingWaitms replayQueue={0}", _replayQueue.Count);
+                                _logger.LogInformation("ProcessOutputReplay post _cleanUpWaitms replayQueue={0}", _replayQueue.Count);
                                 //before closing reporting queue
                                 //wait for any outstanding APis to respond
                                 //check queue count

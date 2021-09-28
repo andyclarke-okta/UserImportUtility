@@ -29,7 +29,7 @@ namespace UserUtility.Services
  
         private readonly IConfiguration _config;
         private readonly UserQueue<BasicOktaUser> _inputQueue;
-        private IOutputService _outputFiles;
+        private IOutputService _outputService;
         private int _queueWaitms;
         private int _throttleMs;
 
@@ -43,12 +43,16 @@ namespace UserUtility.Services
         private Dictionary<string, string> _addionalAttributes;
         private int _consumerTasks;
 
-        public ConsumerUpdateTestUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputFiles)
+        //int _myCount = 0;
+
+
+      
+        public ConsumerUpdateTestUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputService)
         {
             _logger = logger;
             _inputQueue = inputQueue;
             _config = config;
-            _outputFiles = outputFiles;
+            _outputService = outputService;
             _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
             _throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
 
@@ -91,7 +95,7 @@ namespace UserUtility.Services
                     _logger.LogError("Exception {0}: {1}", ex.GetType().Name, ex.Message);
             }
             Console.WriteLine();
-            _logger.LogInformation("ConsumerUpdateTestUserService  Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+            _logger.LogInformation("ConsumerUpdateTestUserService  Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);         
             return;
         }//end Process Consumer
 
@@ -127,13 +131,15 @@ namespace UserUtility.Services
                     _logger.LogError("ServiceQueue UpdateTestUser Exp={0} TaskId={1}, ThreadId={2}", ex.ToString(), Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
                 }
             }//end while
+
+
             _logger.LogDebug("ServiceQueue Complete UpdateTestUser TaskId={0}, ThreadId={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
         }//end ServiceQueue
 
      
         public async Task PostDataAsync(BasicOktaUser user)
         {
-            _logger.LogTrace("Start UpdateTestUser PostDataAsync  TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id);
+            _logger.LogTrace("ConsumerUpdateTestUserService PostDataAsync Start TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id);
             string path = null;
             string content = null;
             HttpResponseMessage updateResponse = null;
@@ -170,6 +176,10 @@ namespace UserUtility.Services
             profile = (JObject)writer.Token;
 
 
+
+            
+
+
             using (HttpClient client = new HttpClient())
             {                         
                 client.DefaultRequestHeaders.Accept.Clear();
@@ -188,17 +198,19 @@ namespace UserUtility.Services
 
                 //send API
                 path = _apiUrl + "/api/v1/users/" + user.Id;
-                _logger.LogTrace("send update API for {0}", user.Id);
+                _logger.LogTrace("ConsumerUpdateTestUserService send update API for {0} {1}", user.Id, path);
                 updateResponse = await client.PostAsync(path, stringContent).ConfigureAwait(false);
+
+                //var updateResponse = client.PostAsync(path, stringContent).Result;
 
                 if (updateResponse.IsSuccessStatusCode)
                 {
 
-                    content = await updateResponse.Content.ReadAsStringAsync();
-                    BasicOktaUser oktaUser = Newtonsoft.Json.JsonConvert.DeserializeObject<BasicOktaUser>(content);
+                    //content = await updateResponse.Content.ReadAsStringAsync();
+                    //BasicOktaUser oktaUser = Newtonsoft.Json.JsonConvert.DeserializeObject<BasicOktaUser>(content);
                     //user.output = "successful update on OktaId=" + oktaUser.Id;
- 
-                    _logger.LogTrace("PostDataAsync Update Success TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId,user.Id);
+                    _outputService.IncrementSuccessCount();
+                    _logger.LogTrace("ConsumerUpdateTestUserService PostDataAsync Update Success TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId,user.Id);
                 }
                 else
                 {
@@ -210,8 +222,8 @@ namespace UserUtility.Services
                         string remaining = updateResponse.Headers.GetValues("X-Rate-Limit-Remaining").FirstOrDefault<string>();
                         string reset = updateResponse.Headers.GetValues("X-Rate-Limit-Reset").FirstOrDefault<string>();
                         user.output = "Limit=" + limit + ", Remaining=" + remaining + ", Reset=" + reset;
-                    
-                        _logger.LogDebug("PostDataAsync Update Replay TaskId={0}, ThreadId={1}, user={2},429={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id, user.output);
+                        _outputService.IncrementReplayCount();
+                        _logger.LogDebug("ConsumerUpdateTestUserService PostDataAsync Update Replay TaskId={0}, ThreadId={1}, user={2},429={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id, user.output);
                             
                     }
                     else
@@ -220,13 +232,15 @@ namespace UserUtility.Services
                         content = await updateResponse.Content.ReadAsStringAsync();
                         OktaApiError oktaApiError = Newtonsoft.Json.JsonConvert.DeserializeObject<OktaApiError>(content);
                         user.output = "Status=" + updateResponse.StatusCode.ToString() + ",Error=" + oktaApiError.errorCauses[0].errorSummary;
-                        _logger.LogDebug("PostDataAsync Failure add Queue TaskId={0}, ThreadId={1}, user={2},429={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id, user.output);                         
+
+                        _outputService.IncrementFailureCount();
+                        _logger.LogDebug("ConsumerUpdateTestUserService PostDataAsync Failure add Queue TaskId={0}, ThreadId={1}, user={2},429={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.Id, user.output);                         
                     }
                 }
 
 
             } //httpClient
-            _logger.LogTrace("PostDataAsync Complete TaskId={0}, ThreadId={1}, user={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId,user.Id);
+            _logger.LogTrace("ConsumerUpdateTestUserService PostDataAsync Complete TaskId={0}, ThreadId={1}, user={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId,user.Id);
         } //PostDataAsync
 
     }

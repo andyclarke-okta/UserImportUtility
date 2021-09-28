@@ -26,7 +26,7 @@ namespace UserUtility.Services
         private readonly IConfiguration _config;
         //private readonly BlockingCollection<String> _userQueue;
         private readonly UserQueue<BasicOktaUser> _inputQueue;
-        private IOutputService _outputFiles;
+        private IOutputService _outputService;
         private int _queueWaitms;
         private int _throttleMs;
         private bool _deactivateOnly;
@@ -36,20 +36,20 @@ namespace UserUtility.Services
         private string _apiUrl;
         private string _apiToken;
 
-        public ConsumerDeleteUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputFiles)
+        public ConsumerDeleteUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputService)
         {
             _logger = logger;
             _inputQueue = inputQueue;
             _config = config;
-            _outputFiles = outputFiles;
+            _outputService = outputService;
             _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
             _throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
-            _deactivateOnly = _config.GetValue<bool>("rollbackConfig:deactivateOnly");
-            _secondDeleteDelayMs = _config.GetValue<int>("rollbackConfig:secondDeleteDelayMs");
+            _deactivateOnly = _config.GetValue<bool>("deleteConfig:deactivateOnly");
+            _secondDeleteDelayMs = _config.GetValue<int>("deleteConfig:secondDeleteDelayMs");
             _consumerTasks = _config.GetValue<int>("generalConfig:consumerTasks");
             _apiUrl = _config.GetValue<string>("generalConfig:org");
             _apiToken = _config.GetValue<string>("generalConfig:apiToken");
-            _excludeOktaIds = _config.GetSection("rollbackConfig:excludeOktaIds").Get<List<string>>();
+            _excludeOktaIds = _config.GetSection("deleteConfig:excludeOktaIds").Get<List<string>>();
             if (_excludeOktaIds == null)
             {
                 // add placeholder to avoid null error

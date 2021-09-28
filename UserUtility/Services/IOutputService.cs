@@ -11,9 +11,13 @@ namespace UserUtility.Services
     //public interface IOutputService<T>
     public interface IOutputService
     {
-
+       
 
         void ConfigOutput();
         Task ProcessOutput();
+
+        void IncrementSuccessCount();
+        void IncrementFailureCount();
+        void IncrementReplayCount();
     }
 }

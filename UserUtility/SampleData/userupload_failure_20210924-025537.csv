@@ -1,0 +1,2 @@
+login,email,firstName,lastName,userId,hashedPassword,hashSalt
+johndoe201@mydomain.com,johndoe@mydomain.com,john,doe,07DBB6E6832DA0841DD79701200E4B179F1A94A7B3DD26F612817F3C03117434,f1nd1ngn3m0,,,,,,,,,,Status=BadRequest,Error=password: Password requirements were not met. Password requirements: at least 8 characters, a lowercase letter, an uppercase letter, a number, no parts of your username. Your password cannot be any of your last 4 passwords.

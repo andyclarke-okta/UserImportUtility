@@ -26,21 +26,21 @@ namespace UserUtility.Services
 
         private readonly IConfiguration _config;
         private readonly UserQueue<CustomOktaUser> _inputQueue;
-        private IOutputService _outputFiles;
+        private IOutputService _outputService;
         private int _queueWaitms;
         private int _throttleMs;
         private int _consumerTasks;
         private List<string> _obfuscateWithStatic;
         private List<string> _obfuscateWithGUID;
 
-        public ConsumerObfuscateService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<CustomOktaUser> inputQueue, IOutputService outputFiles)
+        public ConsumerObfuscateService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<CustomOktaUser> inputQueue, IOutputService outputService)
         {
             _logger = logger;
             _inputQueue = inputQueue;
             _config = config;
             _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
             _throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
-            _outputFiles = outputFiles;
+            _outputService = outputService;
             _consumerTasks = _config.GetValue<int>("generalConfig:consumerTasks");
             _obfuscateWithStatic = _config.GetSection("obfuscateConfig:obfuscateWithStatic").Get<List<string>>();
             _obfuscateWithGUID = _config.GetSection("obfuscateConfig:obfuscateWithGUID").Get<List<string>>();

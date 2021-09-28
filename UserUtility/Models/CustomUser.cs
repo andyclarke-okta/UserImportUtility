@@ -416,6 +416,11 @@ namespace UserUtility.Models
         public string placeholder { get; set; }
     }
 
+    public class TestOktaUser
+    {
+        public string placeholder { get; set; }
+    }
+
     public class PagedResultHeader
     {
         public PagedResultHeader(bool isContentNull)

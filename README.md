@@ -157,7 +157,7 @@ The application makes use of JSON configuration files to set runtime parameters.
 User General Configuration Example;
 {
   "generalConfig": {
-    "org": "https://mysubdomain.oktapreview.com",
+    "org": "https://subdomain.oktapreview.com",
     "apiToken": "00oZO57fOmgFZlHQ",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
@@ -165,7 +165,7 @@ User General Configuration Example;
     "producerTasks": 1,
     "consumerTasks": 1,
     "queueWaitms": 3000,
-    "reportingWaitms": 3000, //3000;increase when too many Error Adding Queue Entry
+    "cleanUpWaitms": 3000, //3000;wait time to allow async API responses
     "throttleMs": 130 //130 shall stay under 600/min rl; 1 will hit rl
   },
   "testUserConfig": { //not applicable when creating users from CSV file
@@ -173,7 +173,7 @@ User General Configuration Example;
     "testUserPsw": "Password@1",
     "addionalAttributes": { //email, login and lastName are set programatically with GUID
       "firstName": "testFirstName",
-      "test_attribute": "test1",
+      "test_attribute": "newValue",
       "test_attribute2": "test2",
       "test_attribute3": "test3",
       "test_attribute4": "test4",
@@ -183,11 +183,13 @@ User General Configuration Example;
       "test_attribute8": "test8",
       "test_attribute9": "test9"
     },
-    "numTestUsers": 8
+    "numTestUsers": 20
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
+	"stringArrayFieldSeperator": "|",
     "groupId": "00grgk9kr8XzWtxTh0h7",
+    "createInGroup": true,
     "isLoginEqualEmail": false,
     "isComboHashSalt": false,
     "activateUserwithCreate": true,
@@ -201,17 +203,17 @@ User General Configuration Example;
       "salt"
     ]
   },
-  "rollbackConfig": {
+  "userApiConfig": { //for audit, delete and updateTestUsers configs
+    "apiPageSize": 12,
+    "endpoint": "groups", //groups, allUsers,searchUsers  default=groups
+    "searchcriteria": "lastUpdated gt \"2021-09-27T00:00:00.000Z\"",
+    "groupId": "00grgk9kr8XzWtxTh0h7"
+  },
+  "deleteConfig": {
     "deactivateOnly": false,
     "secondDeleteDelayMs": 100,
     "excludeOktaIds": [
     ]
-  },
-  "userApiConfig": { //for audit,rollback and Test User Update features
-    "apiPageSize": 12,
-    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
-    "searchcriteria": "lastUpdated lt \"2021-09-21T00:00:00.000Z\"",
-    "groupId": "00grgk9kr8XzWtxTh0h7"
   },
   "validationConfig": {
     "validateEmailFormat": [
@@ -238,6 +240,7 @@ User General Configuration Example;
 }
 
 
+
 ```
 
 - **org:** The base URL for your Okta organization
@@ -248,7 +251,7 @@ User General Configuration Example;
 - **producerTasks:** Number of Task for Parallel inout (CSV only)
 - **consumerTasks:** Number of Service Queues initiating worker tasks
 - **queueWaitms:**  wait to wait when queue is empty
-- **reportingWaitms:** One time pause at end of execution to gather summary information
+- **cleanUpWaitms:** One time pause at end of execution to ensure all async API responses have been processed
 - **throttleMs:** Throttle Service Queue to avoid Rate Limits
 
 - **testUserDomain:** email domain of test user
@@ -258,7 +261,8 @@ User General Configuration Example;
 
 - **inputFileFieldSeperator:** field delimiter in input file
 - **stringArrayFieldSeperator: ** field delimiter for string arrays embedded into input file
-- **groupId:** Add User to Group
+- **groupId:** Add User to this Group
+- **createInGroup:** true/false choose to add new users to designated group
 - **isCustomInputLogic:** true/false use this code block to implement customer specific transformations of input fields
 - **isLoginEqualEmail:** true/false, use single column for both username and email
 - **isComboHashSalt:** true/false, use custom processing to decipher salt and hash data

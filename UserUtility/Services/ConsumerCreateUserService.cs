@@ -30,7 +30,7 @@ namespace UserUtility.Services
         private readonly IConfiguration _config;
         //private readonly BlockingCollection<CustomOktaUser> _userQueue;
         private readonly UserQueue<CustomOktaUser> _inputQueue;
-        private IOutputService _outputFiles;
+        private IOutputService _outputService;
         private int _queueWaitms;
         private int _throttleMs;
         private string _apiUrl;
@@ -46,12 +46,12 @@ namespace UserUtility.Services
         private List<string> _omitFromUserProfile;
         private int _consumerTasks;
 
-        public ConsumerCreateUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<CustomOktaUser> inputQueue, IOutputService outputFiles)
+        public ConsumerCreateUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<CustomOktaUser> inputQueue, IOutputService outputService)
         {
             _logger = logger;
             _inputQueue = inputQueue;
             _config = config;
-            _outputFiles = outputFiles;
+            _outputService = outputService;
             _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
             _throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
 

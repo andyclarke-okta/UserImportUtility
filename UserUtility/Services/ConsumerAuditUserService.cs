@@ -26,11 +26,11 @@ namespace UserUtility.Services
         private readonly IConfiguration _config;
         //private readonly BlockingCollection<String> _userQueue;
         private readonly UserQueue<BasicOktaUser> _inputQueue;
-        //private IOutputService _outputFiles;
+        private IOutputService _outputService;
         private int _queueWaitms;
         private int _consumerTasks;
 
-        public ConsumerAuditUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputFiles)
+        public ConsumerAuditUserService(ILogger<IConsumerService> logger, IConfiguration config, UserQueue<BasicOktaUser> inputQueue, IOutputService outputService)
         {
             _logger = logger;
             _inputQueue = inputQueue;

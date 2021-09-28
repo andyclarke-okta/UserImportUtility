@@ -23,14 +23,14 @@ namespace UserUtility.Services
 {
 
 
-    public class ConsumerTestUserService : IConsumerService
+    public class ConsumerCreateTestUserService : IConsumerService
     {
 
         private readonly ILogger<IConsumerService> _logger;
-
         private readonly IConfiguration _config;
+        private IOutputService _outputService;
 
-        private int _queueWaitms;
+        //private int _queueWaitms;
         private int _throttleMs;
         private string _apiUrl;
         private string _apiToken;
@@ -38,11 +38,11 @@ namespace UserUtility.Services
         private int _consumerTasks;
 
         private string _activateUserwithCreate;
-        private bool _provisionUser;
-        private string _sendEmailwithActivation;
-        private int _workFactor;
-        private string _algorithm;
-        private string _saltOrder;
+        //private bool _provisionUser;
+        //private string _sendEmailwithActivation;
+        //private int _workFactor;
+        //private string _algorithm;
+        //private string _saltOrder;
         private List<string> _omitFromUserProfile;
         private bool _createInGroup;
 
@@ -54,17 +54,18 @@ namespace UserUtility.Services
         private Dictionary<string, string> _addionalAttributes;
         //CustomOktaUser _testUser = null;
 
-        int _myCount = 0;
-        int _successCount = 0;
-        int _429Count = 0;
-        int _failureCount = 0;
+        int myCount = 0;
+        //int _successCount = 0;
+        //int _429Count = 0;
+        //int _failureCount = 0;
 
-        public ConsumerTestUserService(ILogger<IConsumerService> logger, IConfiguration config)
+        public ConsumerCreateTestUserService(ILogger<IConsumerService> logger, IConfiguration config, IOutputService outputService)
         {
             _logger = logger;
             _config = config;
-    
-            _queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
+            _outputService = outputService;
+
+            //_queueWaitms = _config.GetValue<int>("generalConfig:queueWaitms");
             _throttleMs = _config.GetValue<int>("generalConfig:throttleMs");
             _group = _config.GetValue<string>("importConfig:groupId");
             _apiUrl = _config.GetValue<string>("generalConfig:org");
@@ -72,32 +73,29 @@ namespace UserUtility.Services
             _consumerTasks = _config.GetValue<int>("generalConfig:consumerTasks");
 
             _activateUserwithCreate = _config.GetValue<string>("importConfig:activateUserwithCreate");
-            _provisionUser = _config.GetValue<bool>("importConfig:provisionUser");
-            _sendEmailwithActivation = _config.GetValue<string>("importConfig:sendEmailwithActivation");
-            _workFactor = _config.GetValue<int>("importConfig:workFactor");
-            _algorithm = _config.GetValue<string>("importConfig:algorithm");
-            _saltOrder = _config.GetValue<string>("importConfig:saltOrder");
+            //_provisionUser = _config.GetValue<bool>("importConfig:provisionUser");
+            //_sendEmailwithActivation = _config.GetValue<string>("importConfig:sendEmailwithActivation");
+            //_workFactor = _config.GetValue<int>("importConfig:workFactor");
+            //_algorithm = _config.GetValue<string>("importConfig:algorithm");
+            //_saltOrder = _config.GetValue<string>("importConfig:saltOrder");
             _omitFromUserProfile = _config.GetSection("importConfig:omitFromUserProfile").Get<List<string>>();
             _createInGroup = _config.GetValue<bool>("importConfig:createInGroup");
 
             _testUserDomain = _config.GetValue<string>("testUserConfig:testUserDomain");
             _numTestUsers = _config.GetValue<int>("testUserConfig:numTestUsers");
             _testUserPsw = _config.GetValue<string>("testUserConfig:testUserPsw");
-            //_addionalAttributes = _config.GetSection("testUserConfig:addionalAttributes").Get<List<string>>();
 
             _addionalAttributes = _config.GetSection("testUserConfig:addionalAttributes").GetChildren().ToDictionary(x => x.Key, x => x.Value);
 
             decimal myDec = (decimal)(_numTestUsers / _consumerTasks);
             _perTaskUsers = (int)Math.Round(myDec);
 
-            //_testUser = new CustomOktaUser();
-
 
         }
 
         public async Task ProcessConsumer()
         {
-            _logger.LogInformation("ProcessTestUserConsumer Start  with {0} consumerTasks on TaskId={1}, ThreadId={2}", _consumerTasks, Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+            _logger.LogInformation("ProcessCreateTestUserConsumer Start  with {0} consumerTasks on TaskId={1}, ThreadId={2}", _consumerTasks, Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
 
             Task[] consumers = new Task[_consumerTasks];
             for (int i = 0; i < consumers.Length; i++)
@@ -124,8 +122,8 @@ namespace UserUtility.Services
                     _logger.LogError("Exception {0}: {1}", ex.GetType().Name, ex.Message);
             }
             Console.WriteLine();
-            _logger.LogInformation("ProcessTestUserConsumer Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
-            _logger.LogInformation("ProcessTestUserConsumer Results totalCount={0}, successCount={1}, 429Count={2}, failureCount={3}", _myCount,_successCount,_429Count,_failureCount);
+            _logger.LogInformation("ProcessCreateTestUserConsumer Complete TaskId={0}, ThreadId={1}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId);
+            //_logger.LogInformation("ProcessCreateTestUserConsumer Results totalCount={0}, successCount={1}, 429Count={2}, failureCount={3}", _myCount,_successCount,_429Count,_failureCount);
             return;
         }//end Process Consumer
 
@@ -173,22 +171,22 @@ namespace UserUtility.Services
                 spinnerCount++;
                 Console.Write("\r{0}", spinnerCount);
                 Task.WaitAll(Task.Delay(_throttleMs));
-                _logger.LogTrace("ServiceQueue TestUser object created  TaskId={0}, ThreadId={1}, email={2}",  Task.CurrentId, Thread.CurrentThread.ManagedThreadId, _testUser.email);
+                _logger.LogTrace("ServiceQueue CreateTestUser object created  TaskId={0}, ThreadId={1}, email={2}",  Task.CurrentId, Thread.CurrentThread.ManagedThreadId, _testUser.email);
  
                 //for blocking approach
                 //var rsp = PostDataAsync(_testUser);
 
                 //for async based approach
                 tasks[i]  = Task.Run(() =>PostDataAsync(_testUser));
-                _logger.LogTrace("ServiceQueue TestUser return PostDataAsync  TaskId={0}, ThreadId={1}, item={2}",   Task.CurrentId, Thread.CurrentThread.ManagedThreadId, _testUser.email);
+                _logger.LogTrace("ServiceQueue CreateTestUser return PostDataAsync  TaskId={0}, ThreadId={1}, item={2}",   Task.CurrentId, Thread.CurrentThread.ManagedThreadId, _testUser.email);
 
             }
 
-            _myCount = _myCount + spinnerCount;
+            myCount = myCount + spinnerCount;
 
             //for async based approach
             Task.WaitAll(tasks);
-            _logger.LogInformation("ServiceQueue Complete TaskId={0}, ThreadId={1}, spinnerCOUNT={2}, myCount={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, spinnerCount, _myCount);
+            _logger.LogInformation("ServiceQueue Complete TaskId={0}, ThreadId={1}, spinnerCOUNT={2}, myCount={3}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, spinnerCount, myCount);
         }//end ServiceQueue
 
 
@@ -197,7 +195,7 @@ namespace UserUtility.Services
      
         public async Task PostDataAsync(CustomOktaUser user)
         {
-            _logger.LogTrace("PostDataAsync Start TestUser TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.email);
+            _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync Start TaskId={0}, ThreadId={1}, item={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.email);
 
 
             string content = null;
@@ -291,7 +289,7 @@ namespace UserUtility.Services
 
 
             var json = JsonConvert.SerializeObject(jsonObject);
-            _logger.LogTrace("PostDataAsync User Json= {0}", json.ToString());
+            _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync User Json= {0}", json.ToString());
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
 
 
@@ -302,7 +300,7 @@ namespace UserUtility.Services
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("SSWS", _apiToken);
 
-                _logger.LogTrace("PostDataAsync send create API email={0}", user.email);
+                _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync send create API email={0}", user.email);
 
                 //for blocking approach
                 //HttpResponseMessage createResponse =  client.PostAsync(path, stringContent).Result;
@@ -316,38 +314,38 @@ namespace UserUtility.Services
                 //two flows; create with password or create withoutpassword then activate without email
                 if (createResponse.IsSuccessStatusCode)
                 {
-                        _logger.LogTrace("PostDataAsync API rsp create:success, prov:false");
-                    _successCount = _successCount + 1;
+                    _outputService.IncrementSuccessCount();
+                    _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync API rsp create:success, prov:false");
+                    //_successCount = _successCount + 1;
                 }
                 else
                 {
-                    _logger.LogTrace("PostDataAsync API rsp create:NOT success, status_code={0}", createResponse.StatusCode);
+                    _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync API rsp create:NOT success, status_code={0}", createResponse.StatusCode);
                     if (createResponse.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
                     {
                         //429 response
-                        _logger.LogTrace("PostDataAsync API rsp create: replay, prov:false");
-                        _429Count = _429Count + 1;
+                        _outputService.IncrementReplayCount();
+                        _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync API rsp create: replay, prov:false");
+                        //_429Count = _429Count + 1;
                     }
                     else
                     {
                         //failure response
-                        _logger.LogTrace("PostDataAsync API rsp create:failure, prov:false");
-                        _failureCount = _failureCount + 1;
+                        _outputService.IncrementFailureCount();
+
+                        //_failureCount = _failureCount + 1;
 
                         //for failed users  
                         content = createResponse.Content.ReadAsStringAsync().Result;
                         OktaApiError oktaApiError = Newtonsoft.Json.JsonConvert.DeserializeObject<OktaApiError>(content);
                         //user.output = "Status=" + response.StatusCode.ToString() + ",Error=" + oktaApiError.errorCauses[0].errorSummary;
-                        _logger.LogDebug("PostDataAsync Failure email{0}, error={1}", user.email, oktaApiError.errorCauses[0].errorSummary);
+                        _logger.LogDebug("ProcessCreateTestUserConsumer PostDataAsync Failure email{0}, error={1}", user.email, oktaApiError.errorCauses[0].errorSummary);
                     }
                 }//end create not success
 
             }
-            _logger.LogTrace("PostDataAsync  Complete TaskId={0}, ThreadId={1}, user={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.email);
-        }
-
-      
-
+            _logger.LogTrace("ProcessCreateTestUserConsumer PostDataAsync  Complete TaskId={0}, ThreadId={1}, user={2}", Task.CurrentId, Thread.CurrentThread.ManagedThreadId, user.email);
+        }     
 
     }
 
