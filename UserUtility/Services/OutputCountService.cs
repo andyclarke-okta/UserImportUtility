@@ -49,7 +49,7 @@ namespace UserUtility.Services
             Console.WriteLine();
             //add delay to allow async API responses to be processed
             Task.WaitAll(Task.Delay(_cleanUpWaitms));
-            _logger.LogInformation("OutputCountService Complete successCount {0}, failureCout {1}, replayCount{2} ", outputSuccessCount, outputFailureCount, outputReplayCount);
+            _logger.LogInformation("OutputCountService Complete successCount {0}, failureCout {1}, replayCount {2} ", outputSuccessCount, outputFailureCount, outputReplayCount);
             return;
         }
 

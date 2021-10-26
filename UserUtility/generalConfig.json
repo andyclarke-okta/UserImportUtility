@@ -1,7 +1,7 @@
 {
   "generalConfig": {
-    "org": "https://subdomain.oktapreview.com",
-    "apiToken": "00wACEM7O-4hg2bAhf6uK_",
+    "org": "https://aclarkeimport.oktapreview.com",
+    "apiToken": "00oZO57fOmgFZlHQy0WCOIpkLD0oL6PshJyiOfR3-l",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
@@ -9,14 +9,14 @@
     "consumerTasks": 1,
     "queueWaitms": 3000,
     "cleanUpWaitms": 3000, //3000;wait time to allow async API responses
-    "throttleMs": 15 //130 shall stay under 600/min rl; 1 will hit rl
+    "throttleMs": 130 //130 shall stay under 600/min rl; 1 will hit rl
   },
   "testUserConfig": { //not applicable when creating users from CSV file
     "testUserDomain": "myDomain.com",
     "testUserPsw": "Password@1",
     "addionalAttributes": { //email, login and lastName are set programatically with GUID
       "firstName": "testFirstName",
-      "test_attribute": "newValue1",
+      "test_attribute": "testdata",
       "test_attribute2": "test2",
       "test_attribute3": "test3",
       "test_attribute4": "test4",
@@ -24,16 +24,17 @@
       "test_attribute6": "test6",
       "test_attribute7": "test7",
       "test_attribute8": "test8",
-      "test_attribute9": "test9"
+      "test_attribute9": "test9",
+      "identityAssuranceLevel": "IAL1"
     },
-    "numTestUsers": 2
+    "numTestUsers": 10000
   },
   "importConfig": {
     "inputFileFieldSeperator": ",",
     "stringArrayFieldSeperator": "|",
-    "groupId": "00gyxgm1aYvur4Fto1d6",
-    "createInGroup": false,
-    "isLoginEqualEmail": false,
+    "groupId": "00g12gpudniLW5rfi0h8",
+    "createInGroup": true,
+    "isLoginEqualEmail": true,
     "isComboHashSalt": false,
     "activateUserwithCreate": true,
     "provisionUser": false, //will activate user when no password supplied
@@ -47,16 +48,21 @@
     ]
   },
   "userApiConfig": { //for audit, delete and updateTestUsers features
-    "apiPageSize": 200,
-    "endpoint": "searchUsers", //groups, allUsers,searchUsers  default=groups
-    "searchcriteria": "lastUpdated lt \"2021-01-01T00:00:00.000Z\"",
-    "groupId": "00gyxgm1aYvur4Fto1d6"
+    "apiPageSize": 12,
+    "endpoint": "groups", //groups, allUsers,searchUsers  default=groups
+    "searchcriteria": "lastUpdated gt \"2021-09-27T00:00:00.000Z\"",
+    "groupId": "00g12gpudniLW5rfi0h8"
   },
   "deleteConfig": {
     "deactivateOnly": false,
     "secondDeleteDelayMs": 100,
     "excludeOktaIds": [
     ]
+  },
+  "mongoDbConfig": {
+    "uri": "mongodb+srv://ajc:Timbukto01@oktademo.apbyn.mongodb.net/Okta?retryWrites=true&w=majority",
+    "database": "Okta",
+    "collection": "Users_v2"
   },
   "validationConfig": {
     "validateEmailFormat": [

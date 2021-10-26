@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -18,23 +20,38 @@ namespace UserUtility.Models
     //maintain the same order in the user class that exists in the CSV file to ensure the output files match their headers
     public class CustomOktaUser
     {
-        //DEV_Hashed minimal
+        //MongoDB users
         [Key]
         public string login { get; set; }
         public string email { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
+
+        public string identityAssuranceLevel { get; set; }
         public string value { get; set; }
         public string salt { get; set; }
-        public string test_attribute { get; set; }
-        public string test_attribute2 { get; set; }
-        public string test_attribute3 { get; set; }
-        public string test_attribute4 { get; set; }
-        public string test_attribute5 { get; set; }
-        public string test_attribute6 { get; set; }
-        public string test_attribute7 { get; set; }
-        public string test_attribute8 { get; set; }
-        public string test_attribute9 { get; set; }
+
+
+
+
+
+        //Test Users Cisco
+        //[Key]
+        //public string login { get; set; }
+        //public string email { get; set; }
+        //public string firstName { get; set; }
+        //public string lastName { get; set; }
+        //public string value { get; set; }
+        //public string salt { get; set; }
+        //public string test_attribute { get; set; }
+        //public string test_attribute2 { get; set; }
+        //public string test_attribute3 { get; set; }
+        //public string test_attribute4 { get; set; }
+        //public string test_attribute5 { get; set; }
+        //public string test_attribute6 { get; set; }
+        //public string test_attribute7 { get; set; }
+        //public string test_attribute8 { get; set; }
+        //public string test_attribute9 { get; set; }
 
 
 
@@ -179,6 +196,49 @@ namespace UserUtility.Models
         //value
 
     }
+
+    //MongoDB mapping class
+
+    [BsonIgnoreExtraElements]
+    public class MongoDbUsers
+    {
+        [BsonId]
+        public BsonObjectId Id { get; set; }
+
+        [BsonElement("firstname")]
+        public string firstName { get; set; }
+
+        [BsonElement("lastname")]
+        public string lastName { get; set; }
+
+        [BsonElement("email")]
+        public string email { get; set; }
+
+        [BsonElement("password")]
+        public string password { get; set; }
+
+        [BsonElement("identityAssuranceLevel")]
+        public string identityAssuranceLevel { get; set; }
+    }
+
+    //[BsonIgnoreExtraElements]
+    //public class MongoDbUsers
+    //{
+    //    [BsonId]
+    //    public BsonObjectId Id { get; set; }
+
+    //    [BsonElement("feature_type")]
+    //    public string FeatureType { get; set; }
+
+    //    [BsonElement("chart")]
+    //    public string Chart { get; set; }
+
+    //    [BsonElement("latdec")]
+    //    public double Latitude { get; set; }
+
+    //    [BsonElement("londec")]
+    //    public double Longitude { get; set; }
+    //}
 
     //needed for TinyCsv
     //this maps CSV header to property by index value

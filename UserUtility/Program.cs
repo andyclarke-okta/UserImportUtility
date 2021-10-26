@@ -84,6 +84,13 @@ namespace UserUtility
                     //services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
                     //services.AddSingleton<IProducerService, ProducerTinyCsvService>();
 
+
+                    //Create Users from MongoDB
+                    services.AddSingleton<IOutputService, OutputCustomCsvService>();
+                    services.AddSingleton<UserQueue<CustomOktaUser>>();
+                    services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
+                    services.AddSingleton<IProducerService, ProducerMongoDbService>();
+
                     //Create Users from SQL DB
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();
                     //services.AddSingleton<UserQueue<CustomOktaUser>>();
@@ -91,10 +98,10 @@ namespace UserUtility
                     //services.AddSingleton<IProducerService, ProducerSqlDbService>();
 
                     //Update Test Users 
-                    services.AddSingleton<IOutputService, OutputCountService>();
-                    services.AddSingleton<UserQueue<BasicOktaUser>>();
-                    services.AddSingleton<IConsumerService, ConsumerUpdateTestUserService>();
-                    services.AddSingleton<IProducerService, ProduceOktaApiService>();
+                    //services.AddSingleton<IOutputService, OutputCountService>();
+                    //services.AddSingleton<UserQueue<BasicOktaUser>>();
+                    //services.AddSingleton<IConsumerService, ConsumerUpdateTestUserService>();
+                    //services.AddSingleton<IProducerService, ProduceOktaApiService>();
 
                     //Upsert Users from CSV File
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();

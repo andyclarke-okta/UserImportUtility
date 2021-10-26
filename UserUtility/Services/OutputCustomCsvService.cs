@@ -73,7 +73,8 @@ namespace UserUtility.Services
             }
             else
             {
-                _logger.LogError("No File Found {}", @csvFile);
+                _logger.LogInformation(@"No Input File Found; Output file shall be C:\\temp\userUtilityOutput");
+                csvFile = @"C:\\temp\userUtilityOutput.csv";
             }
 
 
