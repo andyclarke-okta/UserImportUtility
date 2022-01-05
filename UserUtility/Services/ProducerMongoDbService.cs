@@ -28,6 +28,7 @@ namespace UserUtility.Services
     
         private IMongoCollection<MongoDbUsers> _mongoCollection;
         bool _isLoginEqualEmail;
+        bool _isComboHashSalt;
 
         public ProducerMongoDbService(ILogger<IProducerService> logger, IConfiguration config, UserQueue<CustomOktaUser> inputQueue)
         {
@@ -35,6 +36,7 @@ namespace UserUtility.Services
             _config = config;
             _userQueue = inputQueue.userQueue;
             _isLoginEqualEmail = _config.GetValue<bool>("importConfig:isLoginEqualEmail");
+            _isComboHashSalt = _config.GetValue<bool>("importConfig:isComboHashSalt");
             //setup MongoDb 
             var mongoUri = _config.GetValue<string>("mongoDbConfig:uri");
             var mongodatabase = _config.GetValue<string>("mongoDbConfig:database");
@@ -86,6 +88,24 @@ namespace UserUtility.Services
                 if (_isLoginEqualEmail)
                 {
                     newUser.login = newUser.email;
+                }
+
+
+                if (_isComboHashSalt)
+                {
+                    _logger.LogTrace("ProcessMongoDBProducer ComboHashSalt for {0} orig value {1}", newUser.email, newUser.value);
+                    int saltLength = 22;
+                    int hashLength = 31;
+
+                    //var index = newUser.value.IndexOf("$2a$10$");
+                    string myValue = newUser.value.Substring(7);
+
+                    string salt = myValue.Substring(0,saltLength);
+                    string value = myValue.Substring(saltLength, hashLength);                 
+
+                    _logger.LogTrace("ProcessMongoDBProducer Splits for {0}; hash {1}, salt {2}", newUser.login, value, salt);
+                    newUser.value = value;
+                    newUser.salt = salt;
                 }
 
                 _userQueue.Add(newUser);

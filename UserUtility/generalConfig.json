@@ -1,7 +1,7 @@
 {
   "generalConfig": {
     "org": "https://aclarkeimport.oktapreview.com",
-    "apiToken": "00oZO57fOmgFZlHQy0WCOIpkLD0oL6PshJyiOfR3-l",
+    "apiToken": "00oZO57fOmgFZlHQy",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
@@ -35,12 +35,12 @@
     "groupId": "00g12gpudniLW5rfi0h8",
     "createInGroup": true,
     "isLoginEqualEmail": true,
-    "isComboHashSalt": false,
+    "isComboHashSalt": true,
     "activateUserwithCreate": true,
     "provisionUser": false, //will activate user when no password supplied
     "sendEmailwithActivation": "false", //emails never sent when password included
     "workFactor": 10, //BRCYPT only
-    "algorithm": "CLEARTEXT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
+    "algorithm": "BCRYPT", // BCRYPT,SHA-1, SHA-256,SHA-512,MD5, CLEARTEXT,NONE
     "saltOrder": "PREFIX", //PREFIX, POSTFIX (SHA-x, MD5 only)
     "omitFromUserProfile": [
       "value",
@@ -62,7 +62,7 @@
   "mongoDbConfig": {
     "uri": "mongodb+srv://ajc:Timbukto01@oktademo.apbyn.mongodb.net/Okta?retryWrites=true&w=majority",
     "database": "Okta",
-    "collection": "Users_v2"
+    "collection": "Users_v3"
   },
   "validationConfig": {
     "validateEmailFormat": [

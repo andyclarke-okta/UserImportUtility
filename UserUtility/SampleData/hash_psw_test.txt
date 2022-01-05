@@ -1,0 +1,14 @@
+
+cleartext tester123
+BCRYPT hashed iO054NLE3/LY4eUmeMzp6Kohf7BvhCi
+BCRYPT salt qjC8cMWznts6bMTS/Hm2Ve
+
+cleartext tester123
+SHA1 hashed Lm140dY/W9NzRX5ZZes70HZZYCk=
+SHA1 salt postfix kYOxGnC+n92v8g==
+
+cleartext tester123
+SHA1 hashed ZbEe3hrKfLYjZgwL+tUZZwor68Q=
+SHA1 salt postfix rPsj3phD3tF6Kg==
+
+
