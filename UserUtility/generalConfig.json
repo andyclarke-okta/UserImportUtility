@@ -1,7 +1,7 @@
 {
   "generalConfig": {
-    "org": "https://vinnydemo.okta.com",
-    "apiToken": "00-y-WnGURh7OBnac3zpBSi1JxrTcbzmEo_Jkbwo90",
+    "org": "https://mydomain.okta.com",
+    "apiToken": "00-y-WnGURh7OBnac3zp",
     "isValidation": false,
     "outputQueueBufferSize": 20000000,
     "userQueueBufferSize": 20000000,
