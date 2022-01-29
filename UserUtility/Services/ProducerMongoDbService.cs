@@ -78,7 +78,7 @@ namespace UserUtility.Services
                     email = item.email,
                     firstName = item.firstName ,
                     lastName = item.lastName,
-                    identityAssuranceLevel = item.identityAssuranceLevel,
+                    //identityAssuranceLevel = item.identityAssuranceLevel,
                     value = item.password,
                     salt = "none"
                 };

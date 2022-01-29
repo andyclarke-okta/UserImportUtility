@@ -24,6 +24,9 @@ dotNet Core can be executed on any platform.
 Check here for runtime environments for all OSs.     
 [download runtime](https://dotnet.microsoft.com/download/dotnet/3.1)
 
+Install the .Net Core 3.x SDK option
+On Windows Server add C:\Program Files\dornet\  to the PATH environment variable. 
+Provide similiar config in other OSs.
 
 ## Features 
 * Test User Loader create GUID named test users 

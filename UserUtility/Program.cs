@@ -67,9 +67,9 @@ namespace UserUtility
                     }
 
                     //Create Test Users without blocking queue
-                    //services.AddSingleton<IOutputService, OutputCountService>();
-                    //services.AddSingleton<IConsumerService, ConsumerCreateTestUserService>();
-                    //services.AddSingleton<IProducerService, ProducerDummyService>();
+                    services.AddSingleton<IOutputService, OutputCountService>();
+                    services.AddSingleton<IConsumerService, ConsumerCreateTestUserService>();
+                    services.AddSingleton<IProducerService, ProducerDummyService>();
 
                     //Create Test Users with Producer Consumer Model -depricated
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();
@@ -86,10 +86,10 @@ namespace UserUtility
 
 
                     //Create Users from MongoDB
-                    services.AddSingleton<IOutputService, OutputCustomCsvService>();
-                    services.AddSingleton<UserQueue<CustomOktaUser>>();
-                    services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
-                    services.AddSingleton<IProducerService, ProducerMongoDbService>();
+                    //services.AddSingleton<IOutputService, OutputCustomCsvService>();
+                    //services.AddSingleton<UserQueue<CustomOktaUser>>();
+                    //services.AddSingleton<IConsumerService, ConsumerCreateUserService>();
+                    //services.AddSingleton<IProducerService, ProducerMongoDbService>();
 
                     //Create Users from SQL DB
                     //services.AddSingleton<IOutputService, OutputCustomCsvService>();

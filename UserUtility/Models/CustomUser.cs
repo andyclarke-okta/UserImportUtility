@@ -21,28 +21,28 @@ namespace UserUtility.Models
     public class CustomOktaUser
     {
         //MongoDB users
-        [Key]
-        public string login { get; set; }
-        public string email { get; set; }
-        public string firstName { get; set; }
-        public string lastName { get; set; }
+        //[Key]
+        //public string login { get; set; }
+        //public string email { get; set; }
+        //public string firstName { get; set; }
+        //public string lastName { get; set; }
 
-        public string identityAssuranceLevel { get; set; }
-        public string value { get; set; }
-        public string salt { get; set; }
+        //public string identityAssuranceLevel { get; set; }
+        //public string value { get; set; }
+        //public string salt { get; set; }
 
 
 
 
 
         //Test Users Cisco
-        //[Key]
-        //public string login { get; set; }
-        //public string email { get; set; }
-        //public string firstName { get; set; }
-        //public string lastName { get; set; }
-        //public string value { get; set; }
-        //public string salt { get; set; }
+        [Key]
+        public string login { get; set; }
+        public string email { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string value { get; set; }
+        public string salt { get; set; }
         //public string test_attribute { get; set; }
         //public string test_attribute2 { get; set; }
         //public string test_attribute3 { get; set; }
